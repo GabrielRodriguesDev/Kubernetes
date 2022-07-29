@@ -1,0 +1,19 @@
+apiVersion: apps/v1                       #Versão
+kind: ReplicaSet                          #Tipo do objeto
+metadata:                                 #Propriedades do objeto (Nesse contexto é o ReplicaSet)
+  name: goserver                        #Nome do objeto
+  labels:                                 #Labels -> São seletores, uma espécie de alías são compostos por "key:value"
+    app: "goserver"                         #Key/Value -> Uma label 
+spec:                                     #Especificações do nosso objeto
+  replicas: 2                             #Definindo que queremos 2 réplicas de uma pod sempre no ar (Vamos definir como vai ser esses pods em "template").
+  selector:                               #Seletor e ele consegue buscar pelos seletores definidos (labels)
+    matchLabels:                          #
+      app: goserver                       #Labels Key:Value
+  template:                               # Template do pod que será replicado 2 vezes pelo replicaSet -> O que significa que 2 pods conforme as informções descritas a baixo sempre vai estar em execução.
+    metadata:                 
+      labels:                 
+        app: "goserver"      
+    spec:                     
+      containers:             
+        - name: goserver      
+          image: "gabrielrodriguesdev/hello-go:0.0.1" 

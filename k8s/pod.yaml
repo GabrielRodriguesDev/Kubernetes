@@ -1,0 +1,10 @@
+apiVersion: v1            #Versão
+kind: Pod                 #Tipo do objeto
+metadata:                 #Propriedades do objeto (Nesse contexto é o Pod)
+  name: "goserver"        #Nome do objeto
+  labels:                 #Labels -> São seletores, uma espécie de alías são compostos por "key:value"
+    app: "goserver"       #Key/Value -> Uma label 
+spec:                     #Especificações do nosso objeto
+  containers:             #Containers
+    - name: goserver      #nome do container
+      image: "gabrielrodriguesdev/hello-go:0.0.1"                 #Imagem pegando do dockerhub
