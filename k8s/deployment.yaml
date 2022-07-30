@@ -1,7 +1,8 @@
 apiVersion: apps/v1                       #Versão
 kind: Deployment                          #Tipo do objeto
 metadata:                                 #Propriedades do objeto (Nesse contexto é o Deployment)
-  name: goserver-deployment                          #Nome do objeto
+  namespace: gabriel                      #Configurando deployment no namespace gabriel (que foi previamente criado)
+  name: goserver-deployment               #Nome do objeto
   labels:                                 #Labels -> São rotulos, uma espécie de alías são compostos por "key:value"
     app: goserver-deployment              #Key/Value -> Uma label 
 spec:                                     #Especificações do nosso objeto
