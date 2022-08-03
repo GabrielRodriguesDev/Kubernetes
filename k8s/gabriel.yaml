@@ -1,0 +1,35 @@
+apiVersion: apps/v1                       
+kind: Deployment                          
+metadata:                                 
+  namespace: finansist                      
+  name: finansist               
+  labels:                                 
+    app: finansist              
+spec:                                     
+  replicas: 3     
+  selector:                               
+    matchLabels:                          
+      app: finansist                   
+  template:                               
+    metadata:                 
+      labels:                 
+        app: finansist
+    spec:                     
+      containers:             
+        - name: finansist      
+          image: "gabrielrodriguesdev/finansist:0.0.2"
+--- 
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: finansist
+  name: finansist-service
+spec:
+  selector: 
+    app: finansist 
+  type: ClusterIP 
+  ports:
+    - name: finansist-service 
+      port: 80
+      targetPort: 80
+      protocol: TCP 

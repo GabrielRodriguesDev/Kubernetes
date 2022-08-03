@@ -1,20 +1,39 @@
-apiVersion: apps/v1                       #Versão
-kind: Deployment                          #Tipo do objeto
-metadata:                                 #Propriedades do objeto (Nesse contexto é o Deployment)
-  namespace: gabriel                      #Configurando deployment no namespace gabriel (que foi previamente criado)
-  name: goserver-deployment               #Nome do objeto
-  labels:                                 #Labels -> São rotulos, uma espécie de alías são compostos por "key:value"
-    app: goserver-deployment              #Key/Value -> Uma label 
-spec:                                     #Especificações do nosso objeto
-  replicas: 2                             #Definindo que queremos 2 réplicas de uma pod sempre no ar (Vamos definir como vai ser esses pods em "template").
-  selector:                               #Seletor e ele consegue buscar pelos seletores definidos (labels)
-    matchLabels:                          #
-      app: goserver-pod                   #Labels Key:Value
-  template:                               # Template do pod que será replicado 2 vezes pelo replicaSet -> O que significa que 2 pods conforme as informções descritas a baixo sempre vai estar em execução.
+apiVersion: apps/v1                       
+kind: Deployment                          
+metadata:                                 
+  namespace: gabriel                      
+  name: goserver               
+  labels:                                 
+    app: goserver              
+spec:                                     
+  replicas: 2                             
+  selector:                               
+    matchLabels:                          
+      app: goserver                  
+  template:                               
     metadata:                 
       labels:                 
-        app: goserver-pod  
+        app: goserver  
     spec:                     
       containers:             
         - name: goserver      
-          image: "gabrielrodriguesdev/hello-go:0.0.2" 
+          image: "gabrielrodriguesdev/hello-go:0.0.4" 
+          envFrom:                                                  #Definindo que as variavéis de ambiente virão de uma fonte externa
+            - configMapRef:                                         #Definindo que as variavéis virão de um ConfigMap
+                name: goserver-env                                  #Nome do objeto que possui essas configurações
+            
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: gabriel
+  name: goserver-service
+spec:
+  selector: 
+    app: goserver
+  type: ClusterIP
+  ports:
+    - name: goserver-service
+      port: 80
+      targetPort: 80
+      protocol: TCP

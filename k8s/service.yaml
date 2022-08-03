@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: goserver-service
+spec:
+  selector: # Responsavel por filtrar (através de um seletor) todos os pods que estão ligados a esse serviço
+    app: goserver-pod # Seletor irá buscar todos os pods que em seu label tenha "goserver-pod"
+  type: ClusterIP # Tipo do serviço
+  ports:
+    - name: goserver-service # Nome (apelido) da porta
+      port: 80 # Especificação de porta
+      protocol: TCP # Protocolo de comunicação
+      
