@@ -17,11 +17,17 @@ spec:
     spec:                     
       containers:             
         - name: goserver      
-          image: "gabrielrodriguesdev/hello-go:0.0.4" 
+          image: "gabrielrodriguesdev/hello-go:0.0.6" 
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "1"
+            requests:
+              memory: 256Mi
+              cpu: "0.2"
           envFrom:                                                  #Definindo que as variavéis de ambiente virão de uma fonte externa
-            - configMapRef:                                         #Definindo que as variavéis virão de um ConfigMap
-                name: goserver-env                                  #Nome do objeto que possui essas configurações
-            
+            - secretRef:                                            #Lendo as informações a partir de um secret
+                name: goserver-secret                               #Selecionando o secret goserver-secret
 ---
 apiVersion: v1
 kind: Service
