@@ -17,7 +17,7 @@ spec:
     spec:                     
       containers:             
         - name: goserver      
-          image: "gabrielrodriguesdev/hello-go:0.0.6" 
+          image: "gabrielrodriguesdev/hello-go:0.0.9" 
           resources:
             limits:
               memory: 512Mi

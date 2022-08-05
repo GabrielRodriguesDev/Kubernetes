@@ -2,22 +2,31 @@ apiVersion: apps/v1
 kind: Deployment                          
 metadata:                                 
   namespace: finansist                      
-  name: finansist               
+  name: finansist-adm              
   labels:                                 
-    app: finansist              
+    app: finansist-adm              
 spec:                                     
   replicas: 3     
   selector:                               
     matchLabels:                          
-      app: finansist                   
+      app: finansist-adm                   
   template:                               
     metadata:                 
       labels:                 
-        app: finansist
+        app: finansist-adm
     spec:                     
       containers:             
-        - name: finansist      
-          image: "gabrielrodriguesdev/finansist:0.0.2"
+        - name: finansist-adm      
+          image: "gabrielrodriguesdev/finansist:1.0.1"
+          ports:
+          - containerPort: 80
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "1"
+            requests:
+              memory: 256Mi
+              cpu: "0.2"
 --- 
 apiVersion: v1
 kind: Service
@@ -26,7 +35,7 @@ metadata:
   name: finansist-service
 spec:
   selector: 
-    app: finansist 
+    app: finansist-adm
   type: ClusterIP 
   ports:
     - name: finansist-service 
