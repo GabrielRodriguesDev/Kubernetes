@@ -17,16 +17,27 @@ spec:
     spec:                     
       containers:             
         - name: goserver      
-          image: "gabrielrodriguesdev/hello-go:0.0.9"
-          livenessProbe:                                                  #Definindo teste de vivência.
-            initialDelaySeconds: 2                                        #Definindo para só iniciar os testes, após 2 segundos (para dar tempo do container finalizar a criação etc)
-            httpGet:                                                      #Definindo protocolo de requisição HTTP
-              path: /helthz                                               #Definindo path do endpoint
-              port: 8000                                                  #Definindo a porta do container
-            periodSeconds: 5                                              #Definindo o tempo em segundos, no qual ele irá refazer esse teste
-            failuredThreshold: 1                                          #Definindo qual será a quantidade de erros minimas para que seja reiniciado o container.
-            timeout: 1                                                    #Definindo tempo de espera para uma resposta de uma requisição | Exemplo -> Se a aplicação me responder 200 em até 10 segundos eu aceito, mas se passar disso já identifico como erro.
-            sucessThreshold: 3                                            #Definindo quantidade de testes que será feito com base no periodo do timeout | Exemplo -> Nesse exemplo ele vai realizar 3 (sucessThreshold) testes a cada 1 segundo (timeout), caso receba retorno de sucesso nesses 3 testes ele entende que está tudo certo.
+          image: "gabrielrodriguesdev/hello-go:0.0.7"
+          startupProbe:                                                     #Assume o papel initialDelaySeconds pois ele roda antes do readiness e liveness. -> Após o startupProbes os restante entra em ação 
+            httpGet:                                                        #Definindo protocolo de requisição HTTP
+              path: /helthz                                                 #Definindo path do endpoint
+              port: 8000                                                    #Definindo a porta do container
+            periodSeconds: 3                                                #Definindo o tempo em segundos, no qual ele irá refazer esse teste
+            failureThreshold: 30                                            #Definindo qual será a quantidade de erros minimas (aceitavel). -> Fazendo uma analise ele vai tentar fazer o teste de inicialização 30 vezes a cada 1 segundo, portanto o container tem 30 segundos para iniciar.
+          readinessProbe:                                                   
+            httpGet:                                                        
+              path: /helthz                                                 
+              port: 8000                                                    
+            periodSeconds: 1                                                
+            failureThreshold: 1                                             
+          livenessProbe:                                                    
+            httpGet:                                                        
+              path: /helthz                                                 
+              port: 8000                                                    
+            periodSeconds: 5                                                
+            timeoutSeconds: 1
+            failureThreshold: 1                                             
+            successThreshold: 1
           resources:
             limits:
               memory: 512Mi
@@ -50,5 +61,5 @@ spec:
   ports:
     - name: goserver-service
       port: 80
-      targetPort: 80
+      targetPort: 8000
       protocol: TCP
