@@ -17,7 +17,16 @@ spec:
     spec:                     
       containers:             
         - name: goserver      
-          image: "gabrielrodriguesdev/hello-go:0.0.9" 
+          image: "gabrielrodriguesdev/hello-go:0.0.9"
+          livenessProbe:                                                  #Definindo teste de vivência.
+            initialDelaySeconds: 2                                        #Definindo para só iniciar os testes, após 2 segundos (para dar tempo do container finalizar a criação etc)
+            httpGet:                                                      #Definindo protocolo de requisição HTTP
+              path: /helthz                                               #Definindo path do endpoint
+              port: 8000                                                  #Definindo a porta do container
+            periodSeconds: 5                                              #Definindo o tempo em segundos, no qual ele irá refazer esse teste
+            failuredThreshold: 1                                          #Definindo qual será a quantidade de erros minimas para que seja reiniciado o container.
+            timeout: 1                                                    #Definindo tempo de espera para uma resposta de uma requisição | Exemplo -> Se a aplicação me responder 200 em até 10 segundos eu aceito, mas se passar disso já identifico como erro.
+            sucessThreshold: 3                                            #Definindo quantidade de testes que será feito com base no periodo do timeout | Exemplo -> Nesse exemplo ele vai realizar 3 (sucessThreshold) testes a cada 1 segundo (timeout), caso receba retorno de sucesso nesses 3 testes ele entende que está tudo certo.
           resources:
             limits:
               memory: 512Mi
@@ -25,9 +34,9 @@ spec:
             requests:
               memory: 256Mi
               cpu: "0.2"
-          envFrom:                                                  #Definindo que as variavéis de ambiente virão de uma fonte externa
-            - secretRef:                                            #Lendo as informações a partir de um secret
-                name: goserver-secret                               #Selecionando o secret goserver-secret
+          envFrom:                                                  
+            - secretRef:                                            
+                name: goserver-secret                               
 ---
 apiVersion: v1
 kind: Service
