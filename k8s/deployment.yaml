@@ -6,7 +6,8 @@ metadata:
   labels:                                 
     app: goserver              
 spec:                                     
-  replicas: 2                             
+  replicas: 2  
+  revisionHistoryLimit: 1                        
   selector:                               
     matchLabels:                          
       app: goserver                  
@@ -17,13 +18,27 @@ spec:
     spec:                     
       containers:             
         - name: goserver      
-          image: "gabrielrodriguesdev/hello-go:0.0.7"
-          startupProbe:                                                     #Assume o papel initialDelaySeconds pois ele roda antes do readiness e liveness. -> Após o startupProbes os restante entra em ação 
-            httpGet:                                                        #Definindo protocolo de requisição HTTP
-              path: /helthz                                                 #Definindo path do endpoint
-              port: 8000                                                    #Definindo a porta do container
-            periodSeconds: 3                                                #Definindo o tempo em segundos, no qual ele irá refazer esse teste
-            failureThreshold: 30                                            #Definindo qual será a quantidade de erros minimas (aceitavel). -> Fazendo uma analise ele vai tentar fazer o teste de inicialização 30 vezes a cada 1 segundo, portanto o container tem 30 segundos para iniciar.
+          image: "gabrielrodriguesdev/hello-go:0.0.8"
+          resources:                                                        #Definindo recursos do container.
+              requests:                                                     #Definindo o mínimo de recursos minimo que o container precisa para funcionar (se não tiver esse minimo ele nem vai executar) -> Por fim o Kubernetes sobe esse pod no node que tiver esses recursos minimos disponiveis, caso não tenha o pod ficará pendente. 
+                cpu: 10m                                                    #CPU minimo para o container funcionar -> A medida usada é VCPU, cada vCPU possui 1000 milicores então a medida é feito em milicores. Se uma aplicação usar 500m está usando metade de uma vCPU 1000m
+                memory: 20Mi                                                #Memoria minima para o container -> Memória é só fazendo teste de carga para saber o minimo
+              limits:                                                       #Definindo o máximo de recursos que meu container pode ter.
+                cpu: 100m                                                   #Definindo o máximo de CPU que o container pode usar.
+                memory: 25Mi                                                #Definindo o máximo de memória que o container pode usar.
+          # resources:
+          #   limits:
+          #     memory: 512Mi
+          #     cpu: "1"
+          #   requests:
+          #     memory: 256Mi
+          #     cpu: "0.2"
+          startupProbe:                                                     
+            httpGet:                                                        
+              path: /helthz                                                 
+              port: 8000                                                    
+            periodSeconds: 3                                                
+            failureThreshold: 30                                            
           readinessProbe:                                                   
             httpGet:                                                        
               path: /helthz                                                 
@@ -38,16 +53,9 @@ spec:
             timeoutSeconds: 1
             failureThreshold: 1                                             
             successThreshold: 1
-          resources:
-            limits:
-              memory: 512Mi
-              cpu: "1"
-            requests:
-              memory: 256Mi
-              cpu: "0.2"
-          envFrom:                                                  
-            - secretRef:                                            
-                name: goserver-secret                               
+          # envFrom:                                                  
+          #   - secretRef:                                            
+          #       name: goserver-secret                               
 ---
 apiVersion: v1
 kind: Service

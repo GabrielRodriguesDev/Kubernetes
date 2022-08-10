@@ -40,7 +40,6 @@ func ConfigMap(w http.ResponseWriter, r *http.Request) {
 }
 
 func Healthz(w http.ResponseWriter, r *http.Request) {
-
 	duration := time.Since(startedAt)
 
 	if duration.Seconds() < 10 {
@@ -50,5 +49,4 @@ func Healthz(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(200)
 		w.Write([]byte("ok"))
 	}
-
 }
