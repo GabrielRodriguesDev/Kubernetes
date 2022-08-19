@@ -1,0 +1,44 @@
+apiVersion: networking.k8s.io/v1beta1                                         #Versão da Api              
+kind: Ingress                                                                 #Definindo o objeto como Kind
+metadata:                                                                     #Propriedades do objeto 
+  namespace: cafib2b                                                          #Os namespaces são uma maneira de organizar clusters em subclusters virtuais
+  name: ingress-trdev                                                         #Nome do Objeto (Ingress)
+  annotations:                                                                #(O Ingress frequentemente usa anotações para configurar algumas opções dependendo do controlador)
+    kubernetes.io/ingress.class: "nginx"                                      #Especifica qual Ingress Controller deve manipular o recurso Ingress. Defina como nginxpara fazer com que o NGINX Ingress Controller o manipule.
+    cert-manager.io/cluster-issuer: "letsencrypt"                             #Configuração do Controller Cert-Manager
+    nginx.ingress.kubernetes.io/affinity: cookie                              #Configuração do Controller NGINX -> (Anotações que começam com nginx.comsão compatíveis apenas com o NGINX Plus).
+    nginx.ingress.kubernetes.io/affinity-mode: balanced                       #Configuração do Controller NGINX -> (Anotações que começam com nginx.comsão compatíveis apenas com o NGINX Plus).
+spec:                                                                         #Especificações do objeto
+  rules:                                                                      #Regras
+  - host: "api-onsist.cafib2b.com.br"                                         #Host que irá atender essa regra
+    http:                                                                     #Definindo informações de HTTP
+      paths:                                                                  #Caminhos que irá atender a regra (host+path)
+      - pathType: Prefix                                                      #Definindo como o tipo do path como prefixo
+        path: "/"                                                             #Definindo como / -> Então se acessar o host/ (api-onsist.cafib2b.com.br/) já atende a regra
+        backend:                                                              #Definindo qual será o Back-End que será acessado ao atender essa regra
+          serviceName: cafib2b-onsist-backend-svc                             #Serviço no qual será redirecionado ao atender a essa regra
+          servicePort: 80                                                     #Porta que será usada para acessar o serviço acima
+
+  - host: "apiv2.cafib2b.com.br"                                              #Repete as config especificadas acima com valores diferentes
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          serviceName: cafib2b-gateway-svc
+          servicePort: 80
+
+  - host: "cafib2b.com.br"                                                     #Repete as config especificadas acima com valores diferentes
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          serviceName: cafib2b-front-end-ecommerce-svc
+          servicePort: 80
+
+  tls:
+  - hosts:
+    - "cafib2b.com.br"
+    - "*.cafib2b.com.br"
+    secretName: letsencrypt-tls

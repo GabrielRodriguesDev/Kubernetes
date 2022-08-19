@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1beta1                                         
+kind: Ingress                                                                 
+metadata:                                                                     
+  namespace: finansist                                                       
+  name: ingress-finansist                                                        
+  annotations:                                                               
+    kubernetes.io/ingress.class: "nginx"                                                               
+    nginx.ingress.kubernetes.io/affinity-mode: balanced                      
+spec:                                                                        
+  rules:                                                                     
+  - host: "api.finansist.com.br"                                        
+    http:                                                                    
+      paths:                                                                 
+      - pathType: Prefix                                                     
+        path: "/"                                                            
+        backend:                                                             
+          serviceName: finansist-service                            
+          servicePort: 80                                                   
+  tls:
+  - hosts:
+    - "finansist.com.br"
+    - "*.finansist.com.br"
+    secretName: letsencrypt-tls

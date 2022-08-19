@@ -9,5 +9,5 @@ spec:                                                     #Especificação do ob
     kind: Deployment                                      #Tipo do objeto que será escaloado
     name: goserver                                        #Nome do objeto que será escalonado
   minReplicas: 1                                          #Minimo de replica que necesitam estar em execução (Nunca devemos trabalhar com 1 replica apenas, no minimo duas)
-  maxReplicas: 3                                          #Maximo de replicas -> Só irá escalar até 3 máquinas
+  maxReplicas: 4                                          #Maximo de replicas -> Só irá escalar até 3 máquinas
   targetCPUUtilizationPercentage: 30                      #A partir dos 30% de uso total da CPU, cluster começará a escalar os pods.
